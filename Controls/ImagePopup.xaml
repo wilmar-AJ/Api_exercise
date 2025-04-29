@@ -7,16 +7,17 @@
     Size="300,400"
     CanBeDismissedByTappingOutsideOfPopup="True">
 
-    <Frame
+    <Border
+        Stroke="Black"
+        StrokeThickness="1"
         BackgroundColor="White"
         Padding="10"
-        CornerRadius="20"
+        StrokeShape="RoundRectangle 20"
         VerticalOptions="Center"
-        HorizontalOptions="Center"
-        HasShadow="True">
+        HorizontalOptions="Center">
         <Image x:Name="PopupImage"
                WidthRequest="280"
                HeightRequest="280"
                Aspect="AspectFit" />
-    </Frame>
+    </Border>
 </toolkit:Popup>

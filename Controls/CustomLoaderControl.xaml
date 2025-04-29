@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="cvLoader"
+             x:Class="Api_exercise.Controls.CustomLoaderControl">
+     <VerticalStackLayout Spacing="10">
+        <ActivityIndicator
+            IsRunning="True"
+            IsVisible="True"/>
+        <Label HorizontalTextAlignment="Center"
+               FontSize="{Binding MessageSize, Source={x:Reference Name=cvLoader}}"
+               Text="{Binding Message, Source={x:Reference Name=cvLoader}}"/>
+    </VerticalStackLayout>
+</ContentView>

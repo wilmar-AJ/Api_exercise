@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Api_exercise.Pages.ProductsPage"
+              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Api_exercise.ViewModels"
+             xmlns:ct="clr-namespace:Api_exercise.Controls"
+             Title="productsPages">
+         <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding LoadDataProductsCommand}"/>
+    </ContentPage.Behaviors>
+     <ContentPage.BindingContext>
+        <vm:ProductsViewModel/>
+    </ContentPage.BindingContext>
+    <VerticalStackLayout>
+         <Grid>
+            <ct:CustomLoaderControl
+                Message="Vea que si funciono"
+                MessageSize="30"
+                IsVisible="{Binding IsBusy}"/>
+
+            <CollectionView ItemsSource="{Binding Products}"
+                            IsVisible="{Binding IsBusy, Converter={StaticResource invertBoolConverter}}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="0.2*, 0.6*, 0.2*">
+                            <Image Source="{Binding Image}"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Name}"/>
+
+                        </Grid>
+
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+        </VerticalStackLayout>
+</ContentPage>

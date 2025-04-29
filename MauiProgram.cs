@@ -1,5 +1,4 @@
-﻿using Api_exercise.Models;
-using Api_exercise.Repositories;
+﻿using Api_exercise.Repositories;
 using Api_exercise.Repositories.Interfaces;
 using Api_exercise.Services;
 using Api_exercise.Services.Interfaces;
@@ -30,6 +29,9 @@ public static class MauiProgram
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
+        var app = builder.Build();
+
+		Startup.ServicesProvider = app.Services;
 
 		return builder.Build();
 	}

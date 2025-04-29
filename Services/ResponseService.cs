@@ -6,6 +6,6 @@ public class ResponseService : IResponseService
 {
      public ApiServices<T> GetClient<T>()
     {
-        return new ApiServices<T>("https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic");
+        return new ApiServices<T>("https://www.thecocktaildb.com/api/json/v1/1/");
     }
 }

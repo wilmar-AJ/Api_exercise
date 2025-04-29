@@ -1,9 +1,7 @@
-using Microsoft.Maui.Controls;
-using System;
+using CommunityToolkit.Maui.Views;
 
 namespace Api_exercise.Controls;
 
-[ContentProperty(nameof(Source))]
 public partial class ZoomImageControl : ContentView
 {
     public ZoomImageControl()
@@ -11,8 +9,12 @@ public partial class ZoomImageControl : ContentView
         InitializeComponent();
     }
 
-    public static readonly BindableProperty SourceProperty =
-        BindableProperty.Create(nameof(Source), typeof(ImageSource), typeof(ZoomImageControl), null, BindingMode.TwoWay);
+    public static readonly BindableProperty SourceProperty = BindableProperty.Create(
+        nameof(Source),
+        typeof(ImageSource),
+        typeof(ZoomImageControl),
+        default(ImageSource),
+        BindingMode.TwoWay);
 
     public ImageSource Source
     {
@@ -20,8 +22,9 @@ public partial class ZoomImageControl : ContentView
         set => SetValue(SourceProperty, value);
     }
 
-    private void OnImageTapped(object sender, EventArgs e)
+    private async void OnImageTapped(object sender, EventArgs e)
     {
-        ZoomedFrame.IsVisible = !ZoomedFrame.IsVisible;
+        var popup = new ImagePopup(Source);
+        await Application.Current.MainPage.ShowPopupAsync(popup);
     }
 }

@@ -1,11 +1,15 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Api_exercise.Controls.ZoomImageControl">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:Class="Api_exercise.Controls.ZoomImageControl"
+             x:Name="zoomControl">
+    <Image
+        x:Name="PreviewImage"
+        Source="{Binding Source, Source={x:Reference zoomControl}}"
+        WidthRequest="150"
+        HeightRequest="150"
+        Aspect="AspectFill">
+        <Image.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnImageTapped" />
+        </Image.GestureRecognizers>
+    </Image>
 </ContentView>

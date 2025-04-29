@@ -6,6 +6,8 @@ using Api_exercise.Models;
 using Api_exercise.Repositories.Interfaces;
 
 
+//CARRO 
+
 namespace Api_exercise.ViewModels;
 
 public partial class ProductsViewModel : ObservableObject
@@ -28,9 +30,13 @@ public partial class ProductsViewModel : ObservableObject
     public async virtual Task LoadDataProducts()
     {
         IsBusy = true;
+
         var products = await _productsRepository.GetAllProductsAsync(1);
+
         Products = new ObservableCollection<ProductsModel>(products);
+
         await Task.Delay(TimeSpan.FromSeconds(3));
+        
         IsBusy = false;
     }
 }

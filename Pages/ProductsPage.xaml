@@ -1,64 +1,54 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Api_exercise.Pages.ProductsPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:vm="clr-namespace:Api_exercise.ViewModels"
              xmlns:ct="clr-namespace:Api_exercise.Controls"
-             xmlns:converters="clr-namespace:Api_exercise.Converters"
-             Title="productsPages">
+             xmlns:cv="clr-namespace:Api_exercise.Converters"
+             Title="🛒 Productos">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:InvertBoolConverter x:Key="invertBoolConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+    <!-- Reemplazamos VerticalStackLayout por Grid con dos filas -->
+    <Grid RowDefinitions="Auto,*" Padding="10" RowSpacing="10">
 
-    <ContentPage.Behaviors>
-        <toolkit:EventToCommandBehavior
-            EventName="Appearing"
-            Command="{Binding LoadDataProductsCommand}" />
-    </ContentPage.Behaviors>
+        <!-- Loader (fila 0) -->
+        <ct:CustomLoaderControl
+            Grid.Row="0"
+            Message="Cargando productos..."
+            MessageSize="30"
+            IsVisible="{Binding IsBusy}" />
 
-    <ContentPage.BindingContext>
-        <vm:ProductsViewModel/>
-    </ContentPage.BindingContext>
-
-    <VerticalStackLayout>
-        <Grid>
-            <ct:CustomLoaderControl
-                Message="espere un momento por favor"
-                MessageSize="30"
-                IsVisible="{Binding IsBusy}" />
-
-            <CollectionView ItemsSource="{Binding Products}"
-                            IsVisible="{Binding IsBusy, Converter={StaticResource invertBoolConverter}}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Padding="10" ColumnDefinitions="Auto, *" ColumnSpacing="15">
-                            <Border Stroke="LightGray"
-                                    StrokeThickness="1"
-                                    Background="#F9F9F9"
-                                    StrokeShape="RoundRectangle 12"
-                                    WidthRequest="100"
-                                    HeightRequest="100"
+        <!-- Lista scrollable (fila 1) -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Products}"
+                        IsVisible="{Binding IsBusy, Converter={StaticResource invertBoolConverter}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Stroke="#DDDDDD" StrokeThickness="1" StrokeShape="RoundRectangle 16"
+                            Background="#FFFFFF" Margin="0,6" Padding="10" Shadow="5,5,10,Black">
+                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="15">
+                            <Border Stroke="#CCCCCC" StrokeThickness="1" Background="#FAFAFA"
+                                    StrokeShape="RoundRectangle 12" WidthRequest="100" HeightRequest="100"
                                     VerticalOptions="Center">
-                                <!-- Aquí integramos ZoomImageControl -->
                                 <ct:ZoomImageControl Source="{Binding ImageSource}" />
                             </Border>
 
                             <Label Grid.Column="1"
-                                   Text="{Binding Name}"
+                                   Text="{Binding Name, Converter={StaticResource drinkNameFormatterConverter}}"
+                                   LineBreakMode="TailTruncation"
                                    FontSize="20"
-                                   FontAttributes="Bold"
-                                   VerticalOptions="Center"
-                                   TextColor="Black"
-                                   LineBreakMode="TailTruncation" />
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                   Style="{StaticResource LabelCustom}" />
 
-        </Grid>
-    </VerticalStackLayout>
+                            <Button Grid.Column="2"
+                                    Text="{Binding IsSaved, Converter={StaticResource boolToSaveTextConverter}}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ProductsViewModel}}, Path=ToggleSaveProductCommand}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{StaticResource Primary}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
 </ContentPage>

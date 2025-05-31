@@ -10,29 +10,37 @@ namespace Api_exercise;
 
 public static class MauiProgram
 {
-	public static MauiApp CreateMauiApp()
-	{
-		var builder = MauiApp.CreateBuilder();
-		builder
-			.UseMauiApp<App>()
-			.UseMauiCommunityToolkit()
-			.ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-			});
-			builder.Services.AddSingleton<IProductsRepository, ProductsRepository>();
-		builder.Services.AddSingleton<IResponseService, ResponseService>();
 
-		builder.Services.AddTransient<ProductsViewModel>();
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder();
+        builder
+            .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+            });
+
+  
+        builder.Services.AddSingleton<IProductsRepository, ProductsRepository>();
+        builder.Services.AddSingleton<IResponseService, ResponseService>();
+        builder.Services.AddSingleton<IProductsRealmRepository, ProductsRealmRepository>();
+        builder.Services.AddSingleton<IContexDataBase, ContexDataBase>();
+
+
+        builder.Services.AddSingleton<ProductsViewModel>();
 
 #if DEBUG
-		builder.Logging.AddDebug();
+        builder.Logging.AddDebug();
 #endif
+
         var app = builder.Build();
+        Startup.ServicesProvider = app.Services;
+        
+        return app;
+    }
 
-		Startup.ServicesProvider = app.Services;
-
-		return builder.Build();
-	}
+   
 }

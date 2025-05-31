@@ -1,18 +1,19 @@
 using System.Text.Json.Serialization;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Api_exercise.Models;
 
-public class ProductsModel
+public partial class ProductsModel : ObservableObject
 {
-    
-        [JsonPropertyName("idDrink")]
-        public string? Id { get; set; }
+    public string? Id { get; set; }
 
-        [JsonPropertyName("strDrink")]
-        public string? Name { get; set; }
+    public string? Name { get; set; }
 
-        [JsonPropertyName("strDrinkThumb")]
-        public string? Image { get; set; }
+    public string? Image { get; set; }
 
-         public ImageSource ImageSource => Image != null ? ImageSource.FromUri(new Uri(Image)) : null;
+    public ImageSource ImageSource => Image != null ? ImageSource.FromUri(new Uri(Image)) : null;
+
+    [ObservableProperty]
+    [property: JsonInclude] 
+    private bool _isSaved;
 }

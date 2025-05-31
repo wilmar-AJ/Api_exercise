@@ -11,6 +11,8 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <cv:InvertBoolConverter x:Key="invertBoolConverter"/>
+            <cv:DrinkNameFormatterConverter x:Key="drinkNameFormatterConverter"/>
+            <cv:BoolToSaveTextConverter x:Key="boolToSaveTextConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,4 +1,5 @@
 namespace Api_exercise.Controls;
+using Api_exercise.Extensions;
 
 public partial class ImagePopup : CommunityToolkit.Maui.Views.Popup
 {
@@ -6,5 +7,6 @@ public partial class ImagePopup : CommunityToolkit.Maui.Views.Popup
     {
         InitializeComponent();
         PopupImage.Source = imageSource;
+         ImageBorder.AnimatePopAsync();
     }
 }

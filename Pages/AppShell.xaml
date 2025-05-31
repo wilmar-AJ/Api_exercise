@@ -11,5 +11,9 @@
         Title="Productos"
         ContentTemplate="{DataTemplate pg:ProductsPage}"
         Route="ProductsPage"/>
-        
+          
+          <ShellContent
+        Title="Productos local"
+        ContentTemplate="{DataTemplate pg:ProductsLocalPage}"
+        Route="ProductsLocalPage"/>
 </Shell>

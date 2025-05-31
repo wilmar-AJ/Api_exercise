@@ -8,6 +8,7 @@
     CanBeDismissedByTappingOutsideOfPopup="True">
 
     <Border
+        x:Name="ImageBorder"
         Stroke="Black"
         StrokeThickness="1"
         BackgroundColor="White"

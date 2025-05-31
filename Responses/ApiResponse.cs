@@ -6,5 +6,5 @@ namespace Api_exercise.Responses;
 public class ApiResponse
 {
      [JsonPropertyName("drinks")]
-    public List<ProductsModel>? Drinks { get; set; }
+    public List<ProductsResponse>? Drinks { get; set; }
 }

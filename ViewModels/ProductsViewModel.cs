@@ -4,98 +4,81 @@ using CommunityToolkit.Mvvm.Input;
 using Api_exercise.Models;
 using Api_exercise.Repositories.Interfaces;
 using System.Text.Json;
+using Api_exercise.Repositories;
 
 namespace Api_exercise.ViewModels;
 
 public partial class ProductsViewModel : ObservableObject
 {
     [ObservableProperty]
-    private ObservableCollection<ProductsModel> _products = new();
+    private ObservableCollection<ProductsModel> _products;
 
     [ObservableProperty]
     private bool _isBusy;
 
-    private const string SavedProductsKey = "saved_products";
+    // private const string SavedProductsKey = "saved_products";
     private readonly IProductsRepository _productsRepository;
 
-        public ProductsViewModel(IProductsRepository productsRepository)
+        public ProductsViewModel()
     {
-        
-        _productsRepository = productsRepository ?? throw new ArgumentNullException(nameof(productsRepository));
-        LoadInitialProducts();
+        _productsRepository = Startup.GetService<IProductsRepository>();
     }
+
+
 
     [RelayCommand]
-    public async virtual Task LoadDataProducts()
+    public async Task LoadDataProducts()
     {
+
         IsBusy = true;
 
-        var products = await _productsRepository.GetAllProductsAsync(1);
+        int maxIntentos = 3;
+        int intento = 0;
+        bool exito = false;
 
-        Products = new ObservableCollection<ProductsModel>(products);
-
-        await Task.Delay(TimeSpan.FromSeconds(3));
-        
-        IsBusy = false;
-    }
-
-    private void LoadInitialProducts()
-    {
-        var savedJson = Preferences.Get(SavedProductsKey, string.Empty);
-        if (!string.IsNullOrEmpty(savedJson))
+        while (intento < maxIntentos && !exito)
         {
             try
             {
-                var savedProducts = JsonSerializer.Deserialize<List<ProductsModel>>(savedJson);
-                if (savedProducts != null && savedProducts.Count > 0)
-                {
-                    foreach (var product in savedProducts)
-                    {
-                        var existing = Products.FirstOrDefault(p => p.Id == product.Id);
-                        if (existing != null) existing.IsSaved = true;
-                    }
-                }
+                var products = await _productsRepository.GetAllProductsAsync(1);
+                Products = new ObservableCollection<ProductsModel>(products);
+                exito = true;
             }
-            catch
+            catch (TimeoutException)
             {
-                Preferences.Remove(SavedProductsKey);
+                intento++;
+                if (intento >= maxIntentos)
+                    await Shell.Current.DisplayAlert("Error", "La solicitud tardó demasiado. Revisa tu conexión a internet.", "OK");
+                else
+                    await Task.Delay(1000); // Espera 1 segundo antes de reintentar
             }
-        }
-    }
-
-    private void MarkSavedProducts()
-    {
-        var savedJson = Preferences.Get(SavedProductsKey, string.Empty);
-        if (string.IsNullOrEmpty(savedJson)) return;
-
-        try
-        {
-            var savedProducts = JsonSerializer.Deserialize<List<ProductsModel>>(savedJson);
-            if (savedProducts == null) return;
-
-            foreach (var product in Products)
+            catch (HttpRequestException)
             {
-                product.IsSaved = savedProducts.Any(sp => sp.Id == product.Id);
+                intento = maxIntentos; // No seguir intentando si no hay conexión
+                await Shell.Current.DisplayAlert("Error", "No se pudo conectar al servidor. ¿Estás conectado a internet?", "OK");
+            }
+            catch (Exception ex)
+            {
+                intento = maxIntentos;
+                await Shell.Current.DisplayAlert("Error inesperado", ex.Message, "OK");
             }
         }
-        catch
-        {
-            Preferences.Remove(SavedProductsKey);
-        }
-    }
 
-    [RelayCommand]
-    public void ToggleSaveProduct(ProductsModel product)
-    {
-        if (product == null) return;
-        product.IsSaved = !product.IsSaved;
-        SaveCurrentSelection();
+        await Task.Delay(500);
+        IsBusy = false;
     }
-
-    private void SaveCurrentSelection()
-    {
-        var savedProducts = Products.Where(p => p.IsSaved).ToList();
-        var json = JsonSerializer.Serialize(savedProducts);
-        Preferences.Set(SavedProductsKey, json);
-    }
+    // [RelayCommand]
+    // public async Task save()
+    // {
+    //     if (Products == null)
+    //     {
+    //         await App.Current.MainPage.DisplayAlert("Error", "No hay detalles para guardar", "OK");
+    //         return;
+    //     }
+    //     var item = Products.ToEntity();
+    //     ProductsRealmRepository.saveProducts(item);
+    // }
 }
+
+   
+

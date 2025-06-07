@@ -14,29 +14,38 @@ public class ProductsRepository : IProductsRepository
         _apiResponseService = Startup.GetService<IResponseService>();
     }
     public async Task<List<ProductsModel>> GetAllProductsAsync(int page)
-{
-    var productsClient = _apiResponseService.GetClient<ApiResponse>();
-
-    var response = await productsClient.GetAsync<ApiResponse>(
-        resource: "filter.php?a=Non_Alcoholic");
-
-    if (response?.Drinks != null)
     {
-        return response.Drinks.Select(drink => new ProductsModel
-        {
-            Id = drink.Id,
-            Name = drink.Name,
-            Image = drink.Image
-        }).ToList();
-    }
+        var ProductsClient = _apiResponseService.GetClient<ApiResponse>();
 
-    return new List<ProductsModel>();
-}
+        var response = await ProductsClient.GetAsync<ApiResponse>(
+            resource: "filter.php?a=Non_Alcoholic");
+
+        if (response != null)
+        {
+            return response.Drinks ?? new List<ProductsModel>();
+        }
+        else
+        {
+            throw new Exception("Error fetching Products");
+        }
+
+    // if (response?.Drinks != null)
+    // {
+    //     return response.Drinks.Select(drink => new ProductsModel
+    //     {
+    //         Id = drink.Id,
+    //         Name = drink.Name,
+    //         Image = drink.Image
+    //     }).ToList();
+    // }
+
+            // return new List<ProductsModel>();
+    }
     // public async Task<List<ProductsModel>> GetAllProductsAsync(int page)
     // {
     //     var productsClient = _apiResponseService.GetClient<ApiResponse>();
 
-    //     // Solicitar todos los productos no alcohólicos desde la API
+         
     //     var response = await productsClient.GetAsync<ApiResponse>(
     //         resource:"filter.php?a=Non_Alcoholic");
 

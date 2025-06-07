@@ -1,12 +1,12 @@
-
 using Api_exercise.Entities;
 using Api_exercise.Repositories.Interfaces;
+using Api_exercise.Validators; // 👈 importante
 
 namespace Api_exercise.Repositories;
 
 public class ProductsRealmRepository : IProductsRealmRepository
 {
-         private readonly IContexDataBase _contextRealm;
+    private readonly IContexDataBase _contextRealm;
 
     public ProductsRealmRepository()
     {
@@ -15,11 +15,14 @@ public class ProductsRealmRepository : IProductsRealmRepository
 
     public void saveProducts(ProductsEntities item)
     {
+        if (!ProductsValidator.IsValid(item))
+            return; // 👈 Si no es válido, no hace nada
+
         var realm = _contextRealm.GetRealm();
         realm.Write(() =>
-       {
-           realm.Add(item);
-       });
+        {
+            realm.Add(item, update: true);
+        });
     }
 
     public IQueryable<ProductsEntities> GetAllProducts()

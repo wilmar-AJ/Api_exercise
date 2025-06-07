@@ -4,10 +4,18 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:vm="clr-namespace:Api_exercise.ViewModels"
              xmlns:ct="clr-namespace:Api_exercise.Controls"
-             xmlns:cv="clr-namespace:Api_exercise.Converters"
              Title="🛒 Productos">
 
-    <!-- Reemplazamos VerticalStackLayout por Grid con dos filas -->
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding LoadDataProductsCommand}" />
+    </ContentPage.Behaviors>
+
+    <ContentPage.BindingContext>
+        <vm:ProductsViewModel />
+    </ContentPage.BindingContext>
+
     <Grid RowDefinitions="Auto,*" Padding="10" RowSpacing="10">
 
         <!-- Loader (fila 0) -->
@@ -26,22 +34,25 @@
                     <Border Stroke="#DDDDDD" StrokeThickness="1" StrokeShape="RoundRectangle 16"
                             Background="#FFFFFF" Margin="0,6" Padding="10" Shadow="5,5,10,Black">
                         <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="15">
+                            
+                            <!-- Imagen -->
                             <Border Stroke="#CCCCCC" StrokeThickness="1" Background="#FAFAFA"
                                     StrokeShape="RoundRectangle 12" WidthRequest="100" HeightRequest="100"
                                     VerticalOptions="Center">
                                 <ct:ZoomImageControl Source="{Binding ImageSource}" />
                             </Border>
 
+                            <!-- Nombre -->
                             <Label Grid.Column="1"
-                                   Text="{Binding Name, Converter={StaticResource drinkNameFormatterConverter}}"
+                                   Text="{Binding Name}"
                                    LineBreakMode="TailTruncation"
                                    FontSize="20"
                                    Style="{StaticResource LabelCustom}" />
 
+                            <!-- Botón guardar -->
                             <Button Grid.Column="2"
-                                    Text="{Binding IsSaved, Converter={StaticResource boolToSaveTextConverter}}"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ProductsViewModel}}, Path=ToggleSaveProductCommand}"
-                                    CommandParameter="{Binding .}"
+                                    Text="💾 Guardar"
+                                    Command="{Binding SaveCommand}"
                                     BackgroundColor="Transparent"
                                     TextColor="{StaticResource Primary}" />
                         </Grid>

@@ -30,7 +30,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<IContexDataBase, ContexDataBase>();
 
 
-        builder.Services.AddSingleton<ProductsViewModel>();
+        builder.Services.AddTransient<ProductsViewModel>();
+        builder.Services.AddTransient<ProductsLocalViewModel>();
 
 #if DEBUG
         builder.Logging.AddDebug();

@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Api_exercise.Models;
 using Api_exercise.Repositories.Interfaces;
-using System.Text.Json;
 using Api_exercise.Repositories;
+using System.Text.Json;
 
 namespace Api_exercise.ViewModels;
 
@@ -16,20 +16,19 @@ public partial class ProductsViewModel : ObservableObject
     [ObservableProperty]
     private bool _isBusy;
 
-    // private const string SavedProductsKey = "saved_products";
     private readonly IProductsRepository _productsRepository;
+    private readonly IProductsRealmRepository _productsRealmRepository;
 
-        public ProductsViewModel()
+    public ProductsViewModel()
     {
         _productsRepository = Startup.GetService<IProductsRepository>();
+        _productsRealmRepository = Startup.GetService<IProductsRealmRepository>();
+        Products = new ObservableCollection<ProductsModel>();
     }
-
-
 
     [RelayCommand]
     public async Task LoadDataProducts()
     {
-
         IsBusy = true;
 
         int maxIntentos = 3;
@@ -40,8 +39,26 @@ public partial class ProductsViewModel : ObservableObject
         {
             try
             {
-                var products = await _productsRepository.GetAllProductsAsync(1);
-                Products = new ObservableCollection<ProductsModel>(products);
+                // 🔄 Trae los productos desde la API
+                var apiProducts = await _productsRepository.GetAllProductsAsync(1);
+
+                // 🔍 Trae los productos guardados en Realm
+                var savedItems = _productsRealmRepository.GetAllProducts().ToList();
+
+                // 🔄 Compara y marca los guardados
+                var result = apiProducts.Select(p =>
+                {
+                    var isAlreadySaved = savedItems.Any(s => s.Id == p.Id);
+                    return new ProductsModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Image = p.Image,
+                        IsSaved = isAlreadySaved
+                    };
+                }).ToList();
+
+                Products = new ObservableCollection<ProductsModel>(result);
                 exito = true;
             }
             catch (TimeoutException)
@@ -50,11 +67,11 @@ public partial class ProductsViewModel : ObservableObject
                 if (intento >= maxIntentos)
                     await Shell.Current.DisplayAlert("Error", "La solicitud tardó demasiado. Revisa tu conexión a internet.", "OK");
                 else
-                    await Task.Delay(1000); // Espera 1 segundo antes de reintentar
+                    await Task.Delay(1000);
             }
             catch (HttpRequestException)
             {
-                intento = maxIntentos; // No seguir intentando si no hay conexión
+                intento = maxIntentos;
                 await Shell.Current.DisplayAlert("Error", "No se pudo conectar al servidor. ¿Estás conectado a internet?", "OK");
             }
             catch (Exception ex)
@@ -67,18 +84,4 @@ public partial class ProductsViewModel : ObservableObject
         await Task.Delay(500);
         IsBusy = false;
     }
-    // [RelayCommand]
-    // public async Task save()
-    // {
-    //     if (Products == null)
-    //     {
-    //         await App.Current.MainPage.DisplayAlert("Error", "No hay detalles para guardar", "OK");
-    //         return;
-    //     }
-    //     var item = Products.ToEntity();
-    //     ProductsRealmRepository.saveProducts(item);
-    // }
 }
-
-   
-

@@ -4,10 +4,11 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:vm="clr-namespace:Api_exercise.ViewModels"
              xmlns:ct="clr-namespace:Api_exercise.Controls"
+             xmlns:converters="clr-namespace:Api_exercise.Converters"
              Title="🛒 Productos">
 
     <ContentPage.Behaviors>
-        <toolkit:EventToCommandBehavior
+        <toolkit:EventToCommandBehavior 
             EventName="Appearing"
             Command="{Binding LoadDataProductsCommand}" />
     </ContentPage.Behaviors>
@@ -15,6 +16,12 @@
     <ContentPage.BindingContext>
         <vm:ProductsViewModel />
     </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+    <ResourceDictionary>
+        <converters:BoolToSaveTextConverter x:Key="SaveTextConverter" />
+    </ResourceDictionary>
+</ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*" Padding="10" RowSpacing="10">
 
@@ -51,7 +58,7 @@
 
                             <!-- Botón guardar -->
                             <Button Grid.Column="2"
-                                    Text="💾 Guardar"
+                                    Text="{Binding IsSaved, Converter={StaticResource SaveTextConverter}}"
                                     Command="{Binding SaveCommand}"
                                     BackgroundColor="Transparent"
                                     TextColor="{StaticResource Primary}" />

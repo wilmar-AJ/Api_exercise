@@ -1,6 +1,7 @@
 using Api_exercise.Entities;
 using Api_exercise.Repositories.Interfaces;
-using Api_exercise.Validators; // 👈 importante
+using Api_exercise.Validators;
+using FluentValidation;
 
 namespace Api_exercise.Repositories;
 
@@ -15,8 +16,14 @@ public class ProductsRealmRepository : IProductsRealmRepository
 
     public void saveProducts(ProductsEntities item)
     {
-        if (!ProductsValidator.IsValid(item))
-            return; // 👈 Si no es válido, no hace nada
+        var validator = new ProductsEntitiesValidator();
+        var result = validator.Validate(item);
+
+        if (!result.IsValid)
+        {
+            var errors = string.Join("\n", result.Errors.Select(e => e.ErrorMessage));
+            throw new ValidationException(errors); // 👈 Así como el de tu amigo
+        }
 
         var realm = _contextRealm.GetRealm();
         realm.Write(() =>
